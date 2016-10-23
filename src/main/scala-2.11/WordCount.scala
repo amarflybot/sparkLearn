@@ -12,8 +12,9 @@ object WordCount {
     val textFile = sc.textFile("file:///Users/amarendra/Documents/spark-2.0.7/README.md")
     val tokenizedFileData = textFile.flatMap(line=>line.split(" "))
     val countPrep = tokenizedFileData.map(word=>(word,1))
-    val counts = countPrep.map(word => (word, 1)).reduceByKey{case (x,y) => x + y}
-    counts.saveAsTextFile("file:///Users/amarendra/IdeaProjects/sparkLearn/target/resultWordCount")
+    val counts = countPrep.reduceByKey((accumValue,newValue) => accumValue + newValue)
+    val sortedCounts = counts.sortBy(kvPair=>kvPair._2, false)
+    sortedCounts.saveAsTextFile("file:///Users/amarendra/IdeaProjects/sparkLearn/target/resultWordCount")
   }
 
 }
